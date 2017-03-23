@@ -38,8 +38,8 @@ public class HttpRequest {
             try {
                 connection = (HttpURLConnection)url.openConnection();
                 connection.setRequestMethod("GET");
-                connection.setConnectTimeout(5000);
-                connection.setReadTimeout(5000);
+                connection.setConnectTimeout(10000);
+                connection.setReadTimeout(10000);
                 connection.setInstanceFollowRedirects(true);
                 int responseCode = connection.getResponseCode();
 
