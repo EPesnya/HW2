@@ -8,6 +8,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
+import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity  implements RequestListener {
@@ -24,7 +26,8 @@ public class MainActivity extends AppCompatActivity  implements RequestListener 
         mRecyclerView = (RecyclerView) findViewById(R.id.rvContacts);
         mRecyclerView.setHasFixedSize(true);
 
-        if (MyApp.imgs.size() == MyApp.ZERO) {
+        if (savedInstanceState == null) {
+            MyApp.imgs = new ArrayList<>();
             mRequestTask = new DownloadJSONAsync(MainActivity.this).execute(DownloadJSONAsync.JSON_URL);
         } else {
             mLayoutManager = new LinearLayoutManager(this);
