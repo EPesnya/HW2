@@ -16,18 +16,9 @@ public class DownloadJSONAsync extends AsyncTask<String, Integer, List<ImgObj>> 
     public static final String JSON_URL = "http://188.166.49.215/tech/imglist.json";
     private WeakReference<RequestListener> mListener;
     protected int mErrorStringID;
-    private MainActivity activity;
 
     public DownloadJSONAsync(RequestListener listener) {
         mListener = new WeakReference<>(listener);
-    }
-
-    void link(MainActivity act) {
-        activity = act;
-    }
-
-    void unLink() {
-        activity = null;
     }
 
     @Override

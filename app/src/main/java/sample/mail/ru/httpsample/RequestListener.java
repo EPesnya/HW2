@@ -9,4 +9,6 @@ import java.util.List;
 public interface RequestListener {
     void onRequestResult(List<ImgObj> result);
     void onRequestError(int errorStringID);
+    void onDownloadResult(int imgPosition);
+    void onDownloadError(String downloadErrorMsg);
 }

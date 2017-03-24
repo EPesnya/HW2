@@ -1,8 +1,6 @@
 package sample.mail.ru.httpsample;
 
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,8 +8,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
-import java.net.URL;
-import java.util.Iterator;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity  implements RequestListener {
@@ -20,7 +16,6 @@ public class MainActivity extends AppCompatActivity  implements RequestListener 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private MyApp app;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,13 +23,12 @@ public class MainActivity extends AppCompatActivity  implements RequestListener 
         setContentView(R.layout.activity_main);
         mRecyclerView = (RecyclerView) findViewById(R.id.rvContacts);
         mRecyclerView.setHasFixedSize(true);
-        app = (MyApp) getApplicationContext();
 
-        if (savedInstanceState == null) {
+        if (MyApp.imgs.size() == MyApp.ZERO) {
             mRequestTask = new DownloadJSONAsync(MainActivity.this).execute(DownloadJSONAsync.JSON_URL);
         } else {
             mLayoutManager = new LinearLayoutManager(this);
-            mAdapter = new MyAdapter(app.imgs, this);
+            mAdapter = new MyAdapter(MyApp.imgs, this);
             mRecyclerView.setAdapter(mAdapter);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         }
@@ -55,12 +49,12 @@ public class MainActivity extends AppCompatActivity  implements RequestListener 
 
     @Override
     public void onRequestResult(List<ImgObj> result) {
-        app.imgs = result;
+        MyApp.imgs = result;
         mLayoutManager = new LinearLayoutManager(this);
-        mAdapter = new MyAdapter(app.imgs, this);
+        mAdapter = new MyAdapter(MyApp.imgs, this);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        new DownoladTask().execute(app.imgs);
+        new DownloadTask(MainActivity.this).execute(MyApp.imgs);
     }
 
     @Override
@@ -69,22 +63,15 @@ public class MainActivity extends AppCompatActivity  implements RequestListener 
         toast.show();
     }
 
-    public class DownoladTask extends AsyncTask<List<ImgObj>, Integer, Bitmap> {
-        @Override
-        protected Bitmap doInBackground(List<ImgObj>... params) {
-            Iterator<ImgObj> it  = params[0].iterator();
-            int i = 0;
-            while (it.hasNext()){
-                try {
-                    URL newUrl = new URL(it.next().getImgUrl());
-                    Bitmap mIconVal = BitmapFactory.decodeStream(newUrl.openConnection().getInputStream());
-                    app.imgs.get(i).setImgBitmap(mIconVal);
-                    mAdapter.notifyItemChanged(i);
-                    i++;
-                } catch (Exception e) {}
-            }
-            return null;
-        }
+    @Override
+    public void onDownloadResult(int imgPosition) {
+        mAdapter.notifyItemChanged(imgPosition);
+    }
+
+    @Override
+    public void onDownloadError(String downloadErrorMsg) {
+        Toast toast = Toast.makeText(this, downloadErrorMsg, Toast.LENGTH_SHORT);
+        toast.show();
     }
 }
 

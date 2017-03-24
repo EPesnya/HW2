@@ -11,6 +11,7 @@ import java.util.List;
 
 public class MyApp extends Application {
 
-    public List<ImgObj> imgs = new ArrayList<>();
+    public static final int ZERO = 0;
+    public static List<ImgObj> imgs = new ArrayList<>();
 
 }
