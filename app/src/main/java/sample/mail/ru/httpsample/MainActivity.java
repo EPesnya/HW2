@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity  implements RequestListener {
@@ -18,6 +19,7 @@ public class MainActivity extends AppCompatActivity  implements RequestListener 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    public static boolean paused = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,16 +40,18 @@ public class MainActivity extends AppCompatActivity  implements RequestListener 
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
     public void onStop() {
         super.onStop();
         if (mRequestTask != null) {
             mRequestTask.cancel(true);
         }
+        paused = true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        paused = false;
     }
 
     @Override
@@ -57,7 +61,6 @@ public class MainActivity extends AppCompatActivity  implements RequestListener 
         mAdapter = new MyAdapter(MyApp.imgs, this);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        new DownloadTask(MainActivity.this).execute(MyApp.imgs);
     }
 
     @Override
@@ -66,16 +69,6 @@ public class MainActivity extends AppCompatActivity  implements RequestListener 
         toast.show();
     }
 
-    @Override
-    public void onDownloadResult(int imgPosition) {
-        mAdapter.notifyItemChanged(imgPosition);
-    }
-
-    @Override
-    public void onDownloadError(String downloadErrorMsg) {
-        Toast toast = Toast.makeText(this, downloadErrorMsg, Toast.LENGTH_SHORT);
-        toast.show();
-    }
 }
 
 
